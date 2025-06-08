@@ -1,0 +1,1 @@
+https://www.mastertheboss.com/jboss-frameworks/cdi/configuring-beans-xml-file/
