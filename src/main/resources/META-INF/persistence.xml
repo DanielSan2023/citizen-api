@@ -1,0 +1,14 @@
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.0">
+    <persistence-unit name="citizenPU" transaction-type="JTA">
+        <jta-data-source>jdbc/citizenDS</jta-data-source>
+        <class>com.example.model.Citizen</class>
+        <class>com.example.model.Document</class>
+        <properties>
+<!--            <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>-->
+<!--            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://db:5432/citizens"/>-->
+<!--            <property name="jakarta.persistence.jdbc.user" value="postgres"/>-->
+<!--            <property name="jakarta.persistence.jdbc.password" value="postgres"/>-->
+            <property name="jakarta.persistence.schema-generation.database.action" value="create"/>
+        </properties>
+    </persistence-unit>
+</persistence>

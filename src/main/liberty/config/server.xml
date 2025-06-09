@@ -9,8 +9,23 @@
     </featureManager>
 
     <httpEndpoint id="defaultHttpEndpoint"
-                  host="*" httpPort="9080" httpsPort="9443" />
+                  host="*" httpPort="9080" httpsPort="9443"/>
 
-    <webApplication location="citizen-api.war" contextRoot="/" />
+    <dataSource id="PostgresDS" jndiName="jdbc/citizenDS">
+        <jdbcDriver libraryRef="PostgresLib"/>
+        <properties>
+            <serverName>postgres-db</serverName>
+            <portNumber>5432</portNumber>
+            <databaseName>citizens</databaseName>
+            <user>postgres</user>
+            <password>postgres</password>
+        </properties>
+    </dataSource>
+
+    <library id="PostgresLib">
+        <file name="/config/resources/postgresql.jar"/>
+    </library>
+
+    <webApplication location="citizen-api.war" contextRoot="/"/>
 
 </server>
