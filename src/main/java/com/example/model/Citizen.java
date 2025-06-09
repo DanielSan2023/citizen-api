@@ -56,4 +56,18 @@ public class Citizen {
     public List<Document> getDocuments() {
         return documents;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Citizen citizen = (Citizen) o;
+        return birthNumber != null && birthNumber.equals(citizen.birthNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return birthNumber != null ? birthNumber.hashCode() : 0;
+    }
+
 }

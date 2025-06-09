@@ -1,7 +1,5 @@
 package com.example.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.xml.bind.annotation.*;
 
 import java.util.List;
@@ -18,9 +16,6 @@ public class CitizenDtoFull {
 
     private String birthNumber;
 
-    @NotBlank
-    @Pattern(regexp = "\\d{6}/?\\d{3,4}", message = "Birth number must by 6 number + 3 or 4")
-    @XmlElementWrapper(name = "documents")
     @XmlElement(name = "document")
     private List<DocumentDto> documents;
 

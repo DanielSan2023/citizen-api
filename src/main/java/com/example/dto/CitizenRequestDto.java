@@ -1,6 +1,7 @@
 package com.example.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -16,6 +17,7 @@ public class CitizenRequestDto {
     private String lastName;
 
     @NotBlank(message = "Birth number is required")
+    @Pattern(regexp = "\\d{6}/?\\d{3,4}", message = "Birth number must by 6 number + 3 or 4")
     private String birthNumber;
 
     public CitizenRequestDto() {
