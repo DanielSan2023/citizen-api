@@ -4,8 +4,12 @@ import jakarta.persistence.*;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @XmlRootElement
 @Table(name = "documents")
 public class Document {
@@ -20,12 +24,12 @@ public class Document {
     @XmlElement
     public String number;
 
+    @Setter
+    @Getter
     @ManyToOne
     @JoinColumn(name = "citizen_id")
     @XmlTransient
     public Citizen citizen;
 
-    public void setCitizen(Citizen citizen) {
-        this.citizen = citizen;
-    }
+    //TODO field  - date for expiration, date of issue, etc.
 }

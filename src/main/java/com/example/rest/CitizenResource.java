@@ -20,8 +20,12 @@ import java.util.Optional;
 @Produces(MediaType.APPLICATION_XML)
 public class CitizenResource {
 
+    private final CitizenService citizenService;
+
     @Inject
-    CitizenService citizenService;
+    public CitizenResource(CitizenService citizenService) {
+        this.citizenService = citizenService;
+    }
 
     @Operation(summary = "Create a new citizen",
             description = "Registers a new citizen in the system based on the provided request body.")
