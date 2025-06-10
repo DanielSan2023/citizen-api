@@ -3,9 +3,11 @@ package com.example.service;
 import com.example.dto.CitizenDtoFull;
 import com.example.dto.CitizenDtoSimple;
 import com.example.dto.CitizenRequestDto;
+import com.example.dto.DocumentDtoRequest;
 import com.example.mapper.CitizenMapper;
 import com.example.model.Citizen;
 import com.example.model.Document;
+import com.example.model.DocumentStatus;
 import com.example.validator.CitizenValidator;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -14,6 +16,7 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,8 +41,15 @@ public class CitizenServiceImpl implements CitizenService {
     }
 
     @Transactional
-    public void assignDocument(Long citizenId, Document doc) {
+    public void assignDocument(Long citizenId, DocumentDtoRequest docDto) {
         Citizen citizen = em.find(Citizen.class, citizenId);
+        Document doc = citizenMapper.dtoToDocument(docDto);
+
+        LocalDate today = LocalDate.now();
+        doc.setDateOfIssue(today);
+        doc.setExpiryDate(today.plusYears(5));
+        doc.setStatus(DocumentStatus.VALID);
+
         doc.setCitizen(citizen);
         em.persist(doc);
     }

@@ -25,8 +25,6 @@ public class CitizenValidator {
             throw new ValidationException(DUPLICATE_BIRTH_NUMBER_EXCEPTION);
         }
     }
-
-
 }
 
 

@@ -17,7 +17,7 @@ public class CitizenDtoFull {
     private String birthNumber;
 
     @XmlElement(name = "document")
-    private List<DocumentDto> documents;
+    private List<DocumentDtoResponse> documents;
 
     public CitizenDtoFull() {
     }
@@ -54,11 +54,11 @@ public class CitizenDtoFull {
         this.birthNumber = birthNumber;
     }
 
-    public List<DocumentDto> getDocuments() {
+    public List<DocumentDtoResponse> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(List<DocumentDto> documents) {
+    public void setDocuments(List<DocumentDtoResponse> documents) {
         this.documents = documents;
     }
 }

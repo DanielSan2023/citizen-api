@@ -17,7 +17,7 @@ public class CitizenRequestDto {
     private String lastName;
 
     @NotBlank(message = "Birth number is required")
-    @Pattern(regexp = "\\d{6}/?\\d{3,4}", message = "Birth number must by 6 number + 3 or 4")
+    @Pattern(regexp = "\\d{9,10}", message = "Birth number must be 9 or 10 digits without slash")
     private String birthNumber;
 
     public CitizenRequestDto() {

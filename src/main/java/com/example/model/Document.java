@@ -7,6 +7,8 @@ import jakarta.xml.bind.annotation.XmlTransient;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @Setter
@@ -24,12 +26,20 @@ public class Document {
     @XmlElement
     public String number;
 
+    @XmlElement
+    public LocalDate dateOfIssue;
+
+    @XmlElement
+    public LocalDate expiryDate;
+
+    @XmlElement
+    @Enumerated(EnumType.STRING)
+    public DocumentStatus status = DocumentStatus.VALID;
+
     @Setter
     @Getter
     @ManyToOne
     @JoinColumn(name = "citizen_id")
     @XmlTransient
     public Citizen citizen;
-
-    //TODO field  - date for expiration, date of issue, etc.
 }

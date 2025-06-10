@@ -1,30 +1,24 @@
 package com.example.dto;
 
+import com.example.model.DocumentStatus;
 import com.example.model.DocumentType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "document")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DocumentDto {
-    private Long id;
+public class DocumentDtoResponse {
 
-    @NotNull(message = "Document type is required: ID_CARD, PASSPORT, or DRIVING_LICENSE")
     private DocumentType type;
 
-    @NotBlank(message = "Document number is required")
     private String number;
 
-    public DocumentDto() {
-    }
+    public DocumentStatus status;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public DocumentDtoResponse() {
     }
 
     public DocumentType getType() {
@@ -41,5 +35,13 @@ public class DocumentDto {
 
     public void setNumber(String number) {
         this.number = number;
+    }
+
+    public DocumentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(DocumentStatus status) {
+        this.status = status;
     }
 }

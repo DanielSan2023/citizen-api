@@ -3,6 +3,7 @@ package com.example.rest;
 import com.example.dto.CitizenDtoFull;
 import com.example.dto.CitizenDtoSimple;
 import com.example.dto.CitizenRequestDto;
+import com.example.dto.DocumentDtoRequest;
 import com.example.model.Document;
 import com.example.service.CitizenService;
 import jakarta.inject.Inject;
@@ -64,7 +65,7 @@ public class CitizenResource {
             description = "Assigns a document to a citizen based on the provided ID and document details.")
     @POST
     @Path("/{id}/documents")
-    public Response assignDocument(@PathParam("id") Long citizenId, Document document) {
+    public Response assignDocument(@PathParam("id") Long citizenId, DocumentDtoRequest document) {
         citizenService.assignDocument(citizenId, document);
         return Response.ok().build();
     }
