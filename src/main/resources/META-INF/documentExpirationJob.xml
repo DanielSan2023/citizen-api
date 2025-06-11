@@ -1,0 +1,8 @@
+<job id="documentExpirationJob" xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
+    <step id="step1">
+        <chunk item-count="10">
+            <reader ref="documentReader"/>
+            <writer ref="documentWriter"/>
+        </chunk>
+    </step>
+</job>

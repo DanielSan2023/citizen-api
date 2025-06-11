@@ -2,9 +2,34 @@
 
     <featureManager>
         <feature>jakartaee-10.0</feature>
-        <feature>mpOpenAPI-3.1</feature>
-        <feature>openapi-ui</feature>
+        <feature>mpOpenAPI-4.0</feature>
+        <feature>batch-2.1</feature>
+        <feature>appSecurity-5.0</feature>
     </featureManager>
+
+<!--    //TODO Ensure the user is authenticated before starting the batch job-->
+
+    <basicRegistry id="basic" realm="batchRealm">
+        <user name="batchUser" password="batchPassword" groups="batchAdmin"/>
+    </basicRegistry>
+
+    <batchSecurity>
+        <batchJobRoles roleNames="batchAdmin"/>
+    </batchSecurity>
+
+    <batchJobAuthorization>
+        <role name="batchAdmin">
+            <user name="batchUser"/>
+        </role>
+    </batchJobAuthorization>
+
+    <application-bnd>
+        <security-role name="batchAdmin">
+            <group name="batchAdmin"/>
+        </security-role>
+    </application-bnd>
+
+    <batchExecutor id="default" jobSubmitter="callerRunAs"/>
 
     <httpEndpoint id="defaultHttpEndpoint"
                   host="*" httpPort="9080" httpsPort="9443"/>
