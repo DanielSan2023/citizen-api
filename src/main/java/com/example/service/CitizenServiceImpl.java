@@ -84,14 +84,13 @@ public class CitizenServiceImpl implements CitizenService {
 
             return Optional.of(citizenMapper.citizenToDto(citizen));
 
-        } catch (NoResultException e) {
+        } catch (IllegalArgumentException  e) {
             return Optional.empty();
         }
     }
 
     private Citizen getCitizenIfExist(String birthNumber) {
         try {
-
             return em.createQuery(
                             "SELECT DISTINCT c FROM Citizen c LEFT JOIN FETCH c.documents WHERE c.birthNumber = :birthNumber",
                             Citizen.class)

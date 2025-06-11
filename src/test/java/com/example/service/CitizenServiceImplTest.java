@@ -3,6 +3,7 @@ package com.example.service;
 import com.example.dto.CitizenDtoFull;
 import com.example.dto.CitizenDtoSimple;
 import com.example.dto.CitizenRequestDto;
+import com.example.dto.DocumentDtoRequest;
 import com.example.mapper.CitizenMapper;
 import com.example.model.Citizen;
 import com.example.model.Document;
@@ -57,21 +58,36 @@ class CitizenServiceImplTest {
     }
 
     @Test
-    void GIVEN_valid_citizenId_and_document_WHEN_assignDocument_THEN_document_is_assigned_and_persisted() {
+    void GIVEN_valid_birthNumber_and_document_WHEN_assignDocument_THEN_document_is_assigned_and_persisted() {
         // GIVEN
-        Long citizenId = 1L;
+        String birthNumber = "1234567890";
         Citizen citizen = new Citizen();
-        Document document = new Document();
+        DocumentDtoRequest documentDto = new DocumentDtoRequest();
+        documentDto.setType(/* nejaký typ, napr. */ com.example.model.DocumentType.PASSPORT);
 
-        when(emMock.find(Citizen.class, citizenId)).thenReturn(citizen);
+        TypedQuery<Citizen> citizenQueryMock = mock(TypedQuery.class);
+        TypedQuery<Long> countQueryMock = mock(TypedQuery.class);
+
+        when(emMock.createQuery(contains("SELECT DISTINCT c"), eq(Citizen.class))).thenReturn(citizenQueryMock);
+        when(citizenQueryMock.setParameter("birthNumber", birthNumber)).thenReturn(citizenQueryMock);
+        when(citizenQueryMock.getSingleResult()).thenReturn(citizen);
+
+        when(emMock.createQuery(contains("SELECT COUNT"), eq(Long.class))).thenReturn(countQueryMock);
+        when(countQueryMock.setParameter("birthNumber", birthNumber)).thenReturn(countQueryMock);
+        when(countQueryMock.setParameter("type", documentDto.getType())).thenReturn(countQueryMock);
+        when(countQueryMock.getSingleResult()).thenReturn(0L);
+
+        Document mockDocument = new Document();
+        when(mapperMock.dtoToDocument(documentDto)).thenReturn(mockDocument);
 
         // WHEN
-        service.assignDocument(citizenId, document);
+        service.assignDocument(birthNumber, documentDto);
 
         // THEN
-        assertEquals(citizen, document.getCitizen());
-        verify(emMock).persist(document);
+        assertEquals(citizen, mockDocument.getCitizen());
+        verify(emMock).persist(mockDocument);
     }
+
 
     @Test
     void GIVEN_citizens_in_db_WHEN_findAllCitizens_THEN_return_mapped_dto_list() {
@@ -125,7 +141,7 @@ class CitizenServiceImplTest {
         when(mapperMock.citizenToDto(citizen)).thenReturn(dto);
 
         // WHEN
-        Optional<CitizenDtoFull> result = service.findByBirthNumberWithDocuments(birthNumber);
+        Optional<CitizenDtoFull> result = service.findCitizenByBirthNumberWithDocuments(birthNumber);
 
         // THEN
         assertTrue(result.isPresent());
@@ -143,9 +159,36 @@ class CitizenServiceImplTest {
         when(queryMock.getSingleResult()).thenThrow(NoResultException.class);
 
         // WHEN
-        Optional<CitizenDtoFull> result = service.findByBirthNumberWithDocuments(birthNumber);
+        Optional<CitizenDtoFull> result = service.findCitizenByBirthNumberWithDocuments(birthNumber);
 
         // THEN
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void GIVEN_duplicate_documentType_WHEN_assignDocument_THEN_throw_DuplicateDocumentTypeException() {
+        // GIVEN
+        String birthNumber = "1234567890";
+        DocumentDtoRequest documentDto = new DocumentDtoRequest();
+        documentDto.setType(com.example.model.DocumentType.PASSPORT);
+
+        Citizen citizen = new Citizen();
+        TypedQuery<Citizen> citizenQueryMock = mock(TypedQuery.class);
+        TypedQuery<Long> countQueryMock = mock(TypedQuery.class);
+
+        when(emMock.createQuery(contains("SELECT DISTINCT c"), eq(Citizen.class))).thenReturn(citizenQueryMock);
+        when(citizenQueryMock.setParameter("birthNumber", birthNumber)).thenReturn(citizenQueryMock);
+        when(citizenQueryMock.getSingleResult()).thenReturn(citizen);
+
+        when(emMock.createQuery(contains("SELECT COUNT"), eq(Long.class))).thenReturn(countQueryMock);
+        when(countQueryMock.setParameter("birthNumber", birthNumber)).thenReturn(countQueryMock);
+        when(countQueryMock.setParameter("type", documentDto.getType())).thenReturn(countQueryMock);
+        when(countQueryMock.getSingleResult()).thenReturn(1L); // Duplicate!
+
+        // THEN
+        org.junit.jupiter.api.Assertions.assertThrows(
+                com.example.exception.DuplicateDocumentTypeException.class,
+                () -> service.assignDocument(birthNumber, documentDto)
+        );
     }
 }
