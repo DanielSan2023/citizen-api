@@ -12,11 +12,11 @@ import java.util.Optional;
 public interface CitizenService {
     public void register(CitizenRequestDto citizen);
 
-    public void assignDocument(Long citizenId, DocumentDtoRequest doc);
+    public void assignDocument(String birthNumber, DocumentDtoRequest doc);
 
     public List<CitizenDtoSimple> findAllCitizens();
 
     public CitizenDtoFull findByIdWithDocuments(Long citizenId);
 
-    public Optional<CitizenDtoFull> findByBirthNumberWithDocuments(String birthNumber);
+    public Optional<CitizenDtoFull> findCitizenByBirthNumberWithDocuments(String birthNumber);
 }

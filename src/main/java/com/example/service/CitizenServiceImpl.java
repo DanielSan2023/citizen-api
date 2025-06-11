@@ -4,6 +4,8 @@ import com.example.dto.CitizenDtoFull;
 import com.example.dto.CitizenDtoSimple;
 import com.example.dto.CitizenRequestDto;
 import com.example.dto.DocumentDtoRequest;
+import com.example.exception.DuplicateDocumentTypeException;
+import com.example.generator.IdGenerator;
 import com.example.mapper.CitizenMapper;
 import com.example.model.Citizen;
 import com.example.model.Document;
@@ -19,6 +21,8 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import static com.example.utility.CitizenConstants.YEARS_TO_ADD;
 
 @ApplicationScoped
 public class CitizenServiceImpl implements CitizenService {
@@ -41,13 +45,19 @@ public class CitizenServiceImpl implements CitizenService {
     }
 
     @Transactional
-    public void assignDocument(Long citizenId, DocumentDtoRequest docDto) {
-        Citizen citizen = em.find(Citizen.class, citizenId);
+    public void assignDocument(String birthNumber, DocumentDtoRequest docDto) {
+        Citizen citizen = getCitizenIfExist(birthNumber);
+
+        validateNoDuplicateDocumentType(docDto, birthNumber);
+
         Document doc = citizenMapper.dtoToDocument(docDto);
+
+        String generatedNumber = IdGenerator.generateNumberByDocumentType(docDto.getType());
+        doc.setNumber(generatedNumber);
 
         LocalDate today = LocalDate.now();
         doc.setDateOfIssue(today);
-        doc.setExpiryDate(today.plusYears(5));
+        doc.setExpiryDate(today.plusYears(YEARS_TO_ADD));
         doc.setStatus(DocumentStatus.VALID);
 
         doc.setCitizen(citizen);
@@ -68,17 +78,40 @@ public class CitizenServiceImpl implements CitizenService {
     }
 
     @Override
-    public Optional<CitizenDtoFull> findByBirthNumberWithDocuments(String birthNumber) {
-            try {
-                Citizen citizen = em.createQuery(
-                                "SELECT c FROM Citizen c LEFT JOIN FETCH c.documents WHERE c.birthNumber = :birthNumber",
-                                Citizen.class)
-                        .setParameter("birthNumber", birthNumber)
-                        .getSingleResult();
+    public Optional<CitizenDtoFull> findCitizenByBirthNumberWithDocuments(String birthNumber) {
+        try {
+            Citizen citizen = getCitizenIfExist(birthNumber);
 
-                return Optional.of(citizenMapper.citizenToDto(citizen));
-            } catch (NoResultException e) {
-                return Optional.empty();
-            }
+            return Optional.of(citizenMapper.citizenToDto(citizen));
+
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    private Citizen getCitizenIfExist(String birthNumber) {
+        try {
+
+            return em.createQuery(
+                            "SELECT DISTINCT c FROM Citizen c LEFT JOIN FETCH c.documents WHERE c.birthNumber = :birthNumber",
+                            Citizen.class)
+                    .setParameter("birthNumber", birthNumber)
+                    .getSingleResult();
+
+        } catch (NoResultException e) {
+            throw new IllegalArgumentException("Citizen with birth number " + birthNumber + " does not exist.");
+        }
+    }
+
+    private void validateNoDuplicateDocumentType(DocumentDtoRequest docDto, String birthNumber) {
+        Long count = em.createQuery(
+                        "SELECT COUNT(d) FROM Document d WHERE d.citizen.birthNumber = :birthNumber AND d.type = :type", Long.class)
+                .setParameter("birthNumber", birthNumber)
+                .setParameter("type", docDto.getType())
+                .getSingleResult();
+
+        if (count > 0) {
+            throw new DuplicateDocumentTypeException("Citizen already has a document of type: " + docDto.getType());
+        }
     }
 }

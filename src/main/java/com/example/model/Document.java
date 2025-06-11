@@ -38,7 +38,7 @@ public class Document {
 
     @Setter
     @Getter
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "citizen_id")
     @XmlTransient
     public Citizen citizen;

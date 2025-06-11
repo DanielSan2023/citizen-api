@@ -11,7 +11,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "document")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DocumentDtoRequest {
-    private Long id;
 
     @NotNull(message = "Document type is required: ID_CARD, PASSPORT, or DRIVING_LICENSE")
     private DocumentType type;
@@ -20,14 +19,6 @@ public class DocumentDtoRequest {
     private String number;
 
     public DocumentDtoRequest() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public DocumentType getType() {
@@ -45,7 +36,6 @@ public class DocumentDtoRequest {
     public void setNumber(String number) {
         this.number = number;
     }
-
 
 
 }

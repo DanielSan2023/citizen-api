@@ -56,17 +56,17 @@ public class CitizenResource {
     @GET
     @Path("/birth/{number}")
     public Response getCitizenByBirthNumber(@PathParam("number") String birthNumber) {
-        return citizenService.findByBirthNumberWithDocuments(birthNumber)
+        return citizenService.findCitizenByBirthNumberWithDocuments(birthNumber)
                 .map(Response::ok)
                 .orElseGet(() -> Response.status(Response.Status.NOT_FOUND)).build();
     }
 
     @Operation(summary = "Create a document for a citizen",
-            description = "Assigns a document to a citizen based on the provided ID and document details.")
+            description = "Assigns a document to a citizen based on the provided birth number and document details.")
     @POST
-    @Path("/{id}/documents")
-    public Response assignDocument(@PathParam("id") Long citizenId, DocumentDtoRequest document) {
-        citizenService.assignDocument(citizenId, document);
+    @Path("/{birthNumber}/documents")
+    public Response assignDocument(@PathParam("birthNumber") String birthNumber, DocumentDtoRequest document) {
+        citizenService.assignDocument(birthNumber, document);
         return Response.ok().build();
     }
 }
